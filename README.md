@@ -1,45 +1,45 @@
-# OpenAI Proxy (Nginx)
+# OpenAI Proxy
 
-Простой nginx прокси для OpenAI API.
+Простой прокси для OpenAI API `/v1/chat/completions` на Node.js Express.
 
 ## Установка и запуск
 
 ### Через Docker Compose (рекомендуется)
 
 ```bash
-docker-compose up -d
-```
-
-### Через Docker
-
-Сборка образа:
-```bash
-docker build -t openai-proxy .
-```
-
-Запуск:
-```bash
-docker run -d \
-  --name openai-proxy \
-  -p 3000:3000 \
-  openai-proxy
+docker-compose up -d --build
 ```
 
 ### Локально
 
-1. Установите nginx
-2. Скопируйте `nginx.conf` в конфигурацию nginx (например, `/etc/nginx/sites-available/openai-proxy`)
-3. Создайте симлинк: `sudo ln -s /etc/nginx/sites-available/openai-proxy /etc/nginx/sites-enabled/`
-4. Перезапустите nginx: `sudo nginx -s reload`
+Установка зависимостей:
+
+```bash
+npm install
+```
+
+Запуск:
+
+```bash
+npm start
+```
+
+Или для разработки:
+
+```bash
+npm run dev
+```
+
+Сервер запустится на `http://localhost:3000` (порт можно изменить через переменную окружения `PORT`).
 
 ## Использование
 
-Прокси работает на `http://localhost:3000` и переадресует все запросы к `https://api.openai.com/v1`.
+Прокси работает на `http://localhost:3000` и переадресует запросы к `/v1/chat/completions` на `https://api.openai.com/v1/chat/completions`.
 
-### Пример запроса к /chat/completions:
+### Пример запроса:
 
 ```bash
-curl http://localhost:3000/chat/completions \
+curl http://localhost:3000/v1/chat/completions \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -d '{
@@ -50,7 +50,9 @@ curl http://localhost:3000/chat/completions \
 
 ## Настройка
 
-- Порт можно изменить в `nginx.conf` (строка `listen 3000;`)
-- Все запросы проксируются к `https://api.openai.com/v1`
-- Заголовок `Authorization` передается как есть из клиентского запроса
+Переменные окружения (опционально):
+- `PORT` - порт сервера (по умолчанию 3000)
+- `OPENAI_API_URL` - URL OpenAI API (по умолчанию https://api.openai.com)
+
+Заголовок `Authorization` передается как есть из клиентского запроса.
 

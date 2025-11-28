@@ -1,13 +1,17 @@
-FROM nginx:alpine
+FROM node:20-alpine
 
-# Удаляем дефолтный конфиг nginx
-RUN rm -f /etc/nginx/conf.d/default.conf
+WORKDIR /app
 
-# Копируем наш конфиг
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Копируем package.json и устанавливаем зависимости
+COPY package*.json ./
+RUN npm install --omit=dev
+
+# Копируем код приложения
+COPY index.js ./
 
 # Экспонируем порт
 EXPOSE 3000
 
-# Nginx запускается автоматически через CMD из базового образа
+# Запускаем приложение
+CMD ["node", "index.js"]
 
